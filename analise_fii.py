@@ -16,7 +16,9 @@ response = requests.get(url, headers=headers)
 if response.status_code == 200:
     df = pd.read_html(response.content, encoding='utf-8')[0]
 
-df.sort_values('Códigodo fundo', inplace=True)
+
+
+df.sort_values('Código do fundo', inplace=True)
 
 
 df['Setor'].unique()
@@ -26,7 +28,7 @@ df['Setor'].unique()
 
 df.isna().sum()
 
-categorical_columns = ['Códigodo fundo','Setor']
+categorical_columns = ['Código do fundo','Setor']
 
 idx = df[df['Setor'].isna()].index
 df.drop(idx, inplace=True)
@@ -68,13 +70,13 @@ df['P/VPA'] = df['P/VPA']/100
 # ### Analisando a média por setor
 
 
-indicadores = ['Códigodo fundo',
+indicadores = ['Código do fundo',
                'Setor', 
-               'DY (12M)Acumulado', 
-               'VacânciaFísica', 
-               'VacânciaFinanceira', 
+               'DY (12M) Acumulado', 
+               'Vacância Física', 
+               'Vacância Financeira', 
                'P/VPA', 
-               'QuantidadeAtivos', 
+               'Quantidade Ativos', 
                'Liquidez Diária']
 
 
@@ -97,15 +99,14 @@ def oportunidade_media_setor(df, setor='Shoppings', label_setor='Setor'):
     df_setor = df[df[label_setor].isin([setor])]
     
     filter_ = \
-            (df_setor['QuantidadeAtivos'] > 5) &\
+            (df_setor['Quantidade Ativos'] > 5) &\
             (df_setor['Liquidez Diária'] > 5000) &\
-            (df_setor['P/VPA'] < 1)
-           #  &\
-           # (df_setor['DY (12M)Acumulado'] > media_setor.loc[setor, ('DY (12M)Acumulado','mean')]) 
+            (df_setor['P/VPA'] < 1) #&\
+           # (df_setor['DY (12M) Acumulado'] > media_setor.loc[setor, ('DY (12M) Acumulado','mean')]) 
             
-    print('média do setor Yield: {}'.format(media_setor.loc[setor, ('DY (12M)Acumulado','mean')]))
+    print('média do setor Yield: {}'.format(media_setor.loc[setor, ('DY (12M) Acumulado','mean')]))
     print('média do setor p/VPA: {}'.format(media_setor.loc[setor, ('P/VPA','mean')]))
-    print('média do setor Ativos: {}'.format(media_setor.loc[setor, ('QuantidadeAtivos','mean')]))
+    print('média do setor Ativos: {}'.format(media_setor.loc[setor, ('Quantidade Ativos','mean')]))
     
     return df_setor[filter_]
 
@@ -114,12 +115,12 @@ def oportunidade_media_setor(df, setor='Shoppings', label_setor='Setor'):
 
 
 
-setores_validos_analise = ['Shoppings', 'Títulos e Val. Mob.', 'Lajes Corporativas', 'Logística']
+setores_validos_analise = ['Shoppings', 'Logística']
 
 for setor_valido in setores_validos_analise:
     print("########## {} ##########".format(setor_valido))
     oportunidade = oportunidade_media_setor(df_aux, setor=setor_valido)
-    oportunidade.sort_values('DY (12M)Acumulado', ascending=False, inplace=True)
+    oportunidade.sort_values('DY (12M) Acumulado', ascending=False, inplace=True)
     print(oportunidade)
     print("#############################")
 
